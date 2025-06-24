@@ -3,36 +3,42 @@ import StatsCard from './StatsCard';
 import DomainForm from './DomainForm';
 import CertificateList from './CertificateList';
 import { validation } from '../utils/validation';
+import { apiService } from '../utils/api';
 
 const Dashboard = ({ onToast }) => {
   const [certificates, setCertificates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+    const loadCertificates = async () => {
+      console.log("loadCertificates ===> ")
+      try {
+        // const result = await window.trickleListObjects('ssl-certificate', 100, true);
+        const result = await apiService.getCertificates();
+        console.log("result ===> ",result)
+        setCertificates(result.items || []);
+      } catch (error) {
+        console.log(error);
+        onToast('Failed to load certificates', 'error');
+      }
+    };
+
   useEffect(() => {
     loadCertificates();
   }, []);
 
-  const loadCertificates = async () => {
-    try {
-      const result = await window.trickleListObjects('ssl-certificate', 100, true);
-      setCertificates(result.items || []);
-    } catch (error) {
-      onToast('Failed to load certificates', 'error');
-    }
-  };
-
   const handleGenerateCertificate = async (domain) => {
+    console.log("handleGenerateCertificate", domain)
     setIsLoading(true);
     try {
-      const certificateData = {
-        domain,
-        issueDate: new Date().toISOString(),
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        autoRenew: false,
-        status: 'active'
-      };
+      // const certificateData = {
+      //   domain,
+      //   issueDate: new Date().toISOString(),
+      //   expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+      //   autoRenew: false,
+      //   status: 'active'
+      // };
       
-      await window.trickleCreateObject('ssl-certificate', certificateData);
+      await apiService.generateCertificate(domain);
       await loadCertificates();
       onToast(`SSL certificate generated for ${domain}`, 'success');
     } catch (error) {
@@ -51,7 +57,9 @@ const Dashboard = ({ onToast }) => {
             issueDate: new Date().toISOString(),
             expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
           };
-          await window.trickleUpdateObject('ssl-certificate', certificate.objectId, renewData);
+          await apiService.renewCertificate(certificate.objectId.domain);
+
+          // await window.trickleUpdateObject('ssl-certificate', certificate.objectId, renewData);
           onToast(`Certificate renewed for ${certificate.objectData.domain}`, 'success');
           break;
         case 'toggle-auto':
@@ -59,11 +67,12 @@ const Dashboard = ({ onToast }) => {
             ...certificate.objectData,
             autoRenew: !certificate.objectData.autoRenew
           };
-          await window.trickleUpdateObject('ssl-certificate', certificate.objectId, autoData);
-          onToast(`Auto-renewal ${autoData.autoRenew ? 'enabled' : 'disabled'}`, 'success');
+          // await window.trickleUpdateObject('ssl-certificate', certificate.objectId, autoData);
+          // onToast(`Auto-renewal ${autoData.autoRenew ? 'enabled' : 'disabled'}`, 'success');
           break;
         case 'delete':
-          await window.trickleDeleteObject('ssl-certificate', certificate.objectId);
+          await apiService.deleteCertificate(certificate.objectData.domain);
+          // await window.trickleDeleteObject('ssl-certificate', certificate.objectId);
           onToast(`Certificate deleted for ${certificate.objectData.domain}`, 'success');
           break;
       }

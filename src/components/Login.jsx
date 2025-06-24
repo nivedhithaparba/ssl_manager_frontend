@@ -3,6 +3,7 @@ import { Shield, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../utils/api';
 import { authUtils, defaultUsers } from '../utils/auth';
 import LoadingSpinner from './LoadingSpinner';
+import { jwtDecode } from "jwt-decode"; 
 
 const Login = ({ onLogin, onToast }) => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -16,18 +17,21 @@ const Login = ({ onLogin, onToast }) => {
     setError('');
 
     try {
-      let user = null;
+      let user =null, token = null;
       try {
         const response = await apiService.login(credentials);
-        user = response.user;
-        authUtils.setAuthToken(response.token);
+        token = response.token;
+        const decoded = jwtDecode(token);
+        user = decoded.user;
+        authUtils.setAuthToken(token);
       } catch (apiError) {
-        const demoUser = defaultUsers.find(u => 
-          u.username === credentials.username && u.password === credentials.password
-        );
-        if (!demoUser) throw new Error('Invalid credentials');
-        user = demoUser;
-        authUtils.setAuthToken('demo-token-' + Date.now());
+        throw new Error('Invalid credentials');
+        // const demoUser = defaultUsers.find(u => 
+        //   u.username === credentials.username && u.password === credentials.password
+        // );
+        // if (!demoUser) throw new Error('Invalid credentials');
+        // user = demoUser;
+        // authUtils.setAuthToken('demo-token-' + Date.now());
       }
 
       authUtils.setCurrentUser(user);

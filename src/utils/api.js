@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://13.201.12.208:5000/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -73,11 +73,13 @@ export const apiService = {
 
   // SSL Certificates
   async getCertificates() {
+    console.log("getCertificates");
     const response = await apiClient.get('/certificates');
     return response.data;
   },
 
   async generateCertificate(domain) {
+    console.log("generateCertificate", domain);
     const response = await apiClient.post('/certificates', { domain });
     return response.data;
   },
