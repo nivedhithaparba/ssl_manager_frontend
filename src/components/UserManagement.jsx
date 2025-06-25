@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { defaultUsers, authUtils } from '../utils/auth';
+import { authUtils } from '../utils/auth';
 import UserList from './UserList';
 import UserForm from './UserForm';
 import Modal from './Modal';
@@ -19,10 +19,9 @@ const UserManagement = ({ user, onToast }) => {
       const userList = result.items?.map(item => ({
         id: item.objectId,
         ...item.objectData
-      })) || defaultUsers;
+      }));
       setUsers(userList);
     } catch (error) {
-      setUsers(defaultUsers);
       onToast('Using demo users', 'info');
     }
   };

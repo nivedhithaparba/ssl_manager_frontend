@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../utils/api';
-import { authUtils, defaultUsers } from '../utils/auth';
+import { authUtils } from '../utils/auth';
 import LoadingSpinner from './LoadingSpinner';
 import { jwtDecode } from "jwt-decode"; 
 

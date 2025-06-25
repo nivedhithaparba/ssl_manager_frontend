@@ -136,3 +136,6 @@ dist
 .pnp.*
 
 .zip
+*.zip
+
+build

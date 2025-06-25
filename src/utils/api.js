@@ -91,5 +91,25 @@ export const apiService = {
 
   async deleteCertificate(certificateId) {
     await apiClient.delete(`/certificates/${certificateId}`);
+  }, 
+
+    // DNS TXT Record APIs
+  async generateDNSRecord(domain) {
+    try {
+      const response = await apiClient.post('/dns/generate', { domain });
+      return response.data;
+    } catch (error) {
+      throw new Error('Something went worng',error);
+    }
+  },
+
+  async verifyDNSRecord(domain, name, value) {
+    try {
+      const response = await apiClient.post('/dns/verify', { domain, name, value });
+      return response.data;
+    } catch (error) {
+      throw new Error('DNS record not found or value mismatch');
+    }
   }
+
 };
