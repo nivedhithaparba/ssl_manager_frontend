@@ -56,13 +56,14 @@ const DomainForm = ({ onSubmit, isLoading }) => {
                 const response = await apiService.verifyDNSRecord(domain, dnsRecord.name, dnsRecord.value);
                 console.log('Verify DNS Record Response:', response);
                 
-                if (response.success && response.data.verified) {
-                    setIsVerified(true);
+                if (response?.verified) {
+                    setIsVerified(response.verified);
                     setStep(3);
                 } else {
                     throw new Error('DNS record verification failed');
                 }
             } catch (err) {
+                  console.error('Verify DNS Error:', err); // ✅ log the real error
                 setError(err.message || 'DNS record not found. Please ensure the TXT record is properly configured.');
             } finally {
                 setIsVerifying(false);

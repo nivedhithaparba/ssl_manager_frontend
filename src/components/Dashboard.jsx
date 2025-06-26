@@ -28,7 +28,7 @@ const Dashboard = ({ onToast }) => {
 
   const handleGenerateCertificate = async (domain) => {
     console.log("handleGenerateCertificate", domain)
-    setIsLoading(true);
+    setIsLoading(true); // add this
     try {
       // const certificateData = {
       //   domain,

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { authUtils } from '../utils/auth';
 import UserList from './UserList';
 import UserForm from './UserForm';
 import Modal from './Modal';

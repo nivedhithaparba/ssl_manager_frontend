@@ -80,7 +80,7 @@ export const apiService = {
 
   async generateCertificate(domain) {
     console.log("generateCertificate", domain);
-    const response = await apiClient.post('/certificates', { domain });
+    const response = await apiClient.post('/certificates/generate', { domain });
     return response.data;
   },
 
@@ -106,6 +106,8 @@ export const apiService = {
   async verifyDNSRecord(domain, name, value) {
     try {
       const response = await apiClient.post('/dns/verify', { domain, name, value });
+      console.log('verifyDNSRecord :', response);
+
       return response.data;
     } catch (error) {
       throw new Error('DNS record not found or value mismatch');
